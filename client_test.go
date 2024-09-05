@@ -232,7 +232,7 @@ func TestClientReturnsRequestBuilderErrors(t *testing.T) {
 			return client.CreateCompletionStream(ctx, CompletionRequest{Prompt: ""})
 		}},
 		{"CreateChatCompletion", func() (any, error) {
-			return client.CreateChatCompletion(ctx, ChatCompletionRequest{Model: GPT3Dot5Turbo})
+			return client.CreateChatCompletion(ctx, ChatCompletionRequest{Model: GPT3Dot5Turbo}, nil)
 		}},
 		{"CreateChatCompletionStream", func() (any, error) {
 			return client.CreateChatCompletionStream(ctx, ChatCompletionRequest{Model: GPT3Dot5Turbo})
