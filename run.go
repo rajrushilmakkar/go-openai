@@ -261,7 +261,7 @@ func (c *Client) CreateRun(
 func (c *Client) RetrieveRun(
 	ctx context.Context,
 	threadID string,
-	runID string,
+	runID string, headers map[string]string,
 ) (response Run, err error) {
 	urlSuffix := fmt.Sprintf("/threads/%s/runs/%s", threadID, runID)
 	req, err := c.newRequest(
@@ -272,7 +272,12 @@ func (c *Client) RetrieveRun(
 	if err != nil {
 		return
 	}
-
+	if headers != nil {
+		for key, value := range headers {
+			req.Header.Set(key, value)
+		}
+	}
+	req.Host = "oai.helicone.ai"
 	err = c.sendRequest(req, &response)
 	return
 }

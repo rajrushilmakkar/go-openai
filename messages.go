@@ -82,14 +82,19 @@ type MessageDeletionStatus struct {
 }
 
 // CreateMessage creates a new message.
-func (c *Client) CreateMessage(ctx context.Context, threadID string, request MessageRequest) (msg Message, err error) {
+func (c *Client) CreateMessage(ctx context.Context, threadID string, request MessageRequest, headers map[string]string) (msg Message, err error) {
 	urlSuffix := fmt.Sprintf("/threads/%s/%s", threadID, messagesSuffix)
 	req, err := c.newRequest(ctx, http.MethodPost, c.fullURL(urlSuffix), withBody(request),
 		withBetaAssistantVersion(c.config.AssistantVersion))
 	if err != nil {
 		return
 	}
-
+	if headers != nil {
+		for key, value := range headers {
+			req.Header.Set(key, value)
+		}
+	}
+	req.Host = "oai.helicone.ai"
 	err = c.sendRequest(req, &msg)
 	return
 }
@@ -101,6 +106,7 @@ func (c *Client) ListMessage(ctx context.Context, threadID string,
 	after *string,
 	before *string,
 	runID *string,
+	headers map[string]string,
 ) (messages MessagesList, err error) {
 	urlValues := url.Values{}
 	if limit != nil {
@@ -130,7 +136,12 @@ func (c *Client) ListMessage(ctx context.Context, threadID string,
 	if err != nil {
 		return
 	}
-
+	if headers != nil {
+		for key, value := range headers {
+			req.Header.Set(key, value)
+		}
+	}
+	req.Host = "oai.helicone.ai"
 	err = c.sendRequest(req, &messages)
 	return
 }
