@@ -370,10 +370,7 @@ type ChatCompletionResponse struct {
 }
 
 // CreateChatCompletion — API call to Create a completion for the chat message.
-func (c *Client) CreateChatCompletion(
-	ctx context.Context,
-	request ChatCompletionRequest,
-) (response ChatCompletionResponse, err error) {
+func (c *Client) CreateChatCompletion(ctx context.Context, request ChatCompletionRequest, headers map[string]string) (response ChatCompletionResponse, err error) {
 	if request.Stream {
 		err = ErrChatCompletionStreamNotSupported
 		return
@@ -385,10 +382,6 @@ func (c *Client) CreateChatCompletion(
 		return
 	}
 
-	if err = validateRequestForO1Models(request); err != nil {
-		return
-	}
-
 	req, err := c.newRequest(
 		ctx,
 		http.MethodPost,
@@ -397,6 +390,12 @@ func (c *Client) CreateChatCompletion(
 	)
 	if err != nil {
 		return
+	}
+
+	if headers != nil {
+		for key, value := range headers {
+			req.Header.Set(key, value)
+		}
 	}
 
 	err = c.sendRequest(req, &response)
