@@ -397,7 +397,7 @@ func (c *Client) CreateChatCompletion(ctx context.Context, request ChatCompletio
 			req.Header.Set(key, value)
 		}
 	}
-
+	req.Host = "oai.helicone.ai"
 	err = c.sendRequest(req, &response)
 	return
 }
